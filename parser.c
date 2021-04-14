@@ -96,6 +96,19 @@ void program() {
 Node *stmt() {
 	Node *node;
 
+	if (consume_kind(TK_IF)) {
+		node = calloc(1, sizeof(Node));
+		node->kind = ND_IF;
+		expect("(");
+		node->cond = expr();
+		expect(")");
+		node->then = stmt();
+		if (consume_kind(TK_ELSE)) 
+			node->els = stmt();
+		else
+			node->els = NULL;
+		return node;
+	}
 	if (consume_kind(TK_RETURN)) {
 		node = calloc(1, sizeof(Node));
 		node->kind = ND_RETURN;

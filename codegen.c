@@ -1,5 +1,7 @@
 #include "hilfcc.h"
 
+int ctrl_label_index = 0;
+
 void gen_lval(Node *node) {
 	if (node->kind != ND_LVAR)
 		error("代入の左辺値が変数ではありません");
@@ -16,6 +18,20 @@ void gen(Node *node) {
 			printf("	mov rsp, rbp\n");
 			printf("	pop rbp\n");
 			printf("	ret\n");
+			return;
+		case ND_IF:
+			gen(node->cond);
+			printf("	pop rax\n");
+			printf("	cmp rax, 0\n"); // condの評価結果がfalseの場合Lelseにジャンプ
+			int else_label_index = ctrl_label_index++;
+			int end_label_index = ctrl_label_index++;
+			printf("	je .L.else.%d\n", else_label_index);
+			gen(node->then);
+			printf("	jmp .L.end.%d\n", end_label_index);
+			printf(".L.else.%d:\n", else_label_index);
+			if (node->els)
+				gen(node->els);
+			printf(".L.end.%d:\n", end_label_index);
 			return;
 		case ND_NUM:
 			printf("	push %d\n", node->val);
