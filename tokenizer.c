@@ -51,8 +51,12 @@ void tokenize(char *user_input) {
 			p += 2;
 			continue;
 		}
-		if (strchr("+-*/()<>", *p)) {
+		if (strchr("+-*/()<>=;", *p)) {
 			cur = new_token(TK_RESERVED, cur, p++, 1);
+			continue;
+		}
+		if ('a' <= *p && *p <= 'z') {
+			cur = new_token(TK_IDENT, cur, p++, 1);
 			continue;
 		}
 		if (isdigit(*p)) {
