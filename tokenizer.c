@@ -35,6 +35,11 @@ bool is_ident_char(char p) {
 	return is_ident_head(p) || ('0' <= p && p <= '9');
 }
 
+bool is_keyword(char *p, char *keyword) {
+	int len = strlen(keyword);
+	return strncmp(p, keyword, len) == 0 && !is_ident_char(p[len]);
+}
+
 Token *new_token(TokenKind kind, Token *cur, char *str, int len) {
 	Token *tok = calloc(1, sizeof(Token));
 	tok->kind = kind;
@@ -63,19 +68,24 @@ void tokenize(char *user_input) {
 			cur = new_token(TK_RESERVED, cur, p++, 1);
 			continue;
 		}
-		if (strncmp(p, "return", 6) == 0 && !is_ident_char(p[6])) {
+		if (is_keyword(p, "return")) {
 			cur = new_token(TK_RETURN, cur, p, 6);
 			p += 6;
 			continue;
 		}
-		if (strncmp(p, "if", 2) == 0 && !is_ident_char(p[2])) {
+		if (is_keyword(p, "if")) {
 			cur = new_token(TK_IF, cur, p, 2);
 			p += 2;
 			continue;
 		}
-		if (strncmp(p, "else", 4) == 0 && !is_ident_char(p[4])) {
+		if (is_keyword(p, "else")) {
 			cur = new_token(TK_ELSE, cur, p, 4);
 			p += 4;
+			continue;
+		}
+		if (is_keyword(p, "while")) {
+			cur = new_token(TK_WHILE, cur, p, 5);
+			p += 5;
 			continue;
 		}
 		if (is_ident_head(*p)) {

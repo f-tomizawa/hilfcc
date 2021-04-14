@@ -22,7 +22,7 @@ void gen(Node *node) {
 			printf("	pop rbp\n");
 			printf("	ret\n");
 			return;
-		case ND_IF:
+		case ND_IF: {
 			gen(node->cond);
 			printf("	pop rax\n");
 			printf("	cmp rax, 0\n"); // condの評価結果がfalseの場合Lelseにジャンプ
@@ -35,6 +35,19 @@ void gen(Node *node) {
 				gen(node->els);
 			printf(".L.end.%d:\n", index);
 			return;
+		}
+		case ND_WHILE: {
+			int index = count();
+			printf(".L.begin.%d:\n", index);
+			gen(node->cond);
+			printf("	pop rax\n");
+			printf("	cmp rax, 0\n");
+			printf("	je .L.end.%d\n", index);
+			gen(node->then);
+			printf("	jmp .L.begin.%d\n", index);
+			printf(".L.end.%d:\n", index);
+			return;
+		}
 		case ND_NUM:
 			printf("	push %d\n", node->val);
 			return;
