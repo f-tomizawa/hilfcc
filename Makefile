@@ -1,6 +1,11 @@
 CFLAGS=-std=c11 -g -static
+SRCS=$(wildcard *.c)
+OBJS=$(SRCS:.c=.o)
 
-hilfcc: hilfcc.c
+hilfcc: $(OBJS)
+	$(CC) -o hilfcc $(OBJS) $(LDFLAGS)
+
+$(OBJS): hilfcc.h
 
 test: hilfcc
 	./test.sh
