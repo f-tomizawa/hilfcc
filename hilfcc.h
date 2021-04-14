@@ -21,11 +21,10 @@ struct Token {
 	int len;
 };
 
+extern Token *token;
 void error_at(char *loc, char *fmt, ...);
 void error(char *fmt, ...);
-
-Token *tokenize(char *user_input);
-
+void tokenize(char *user_input);
 
 typedef enum {
 	ND_ADD,
@@ -47,11 +46,9 @@ struct Node {
 	int val;
 };
 
+extern Node *node;
+void parse();
 
-Node *parse(Token *tok);
-
-
-void codegen(Node *node); 
-
+void codegen(); 
 
 extern char *user_input;

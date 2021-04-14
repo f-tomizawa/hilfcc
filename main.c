@@ -9,10 +9,9 @@ int main(int argc, char **argv) {
 	}
 
 	user_input = argv[1];
-	Token *token = tokenize(user_input);
-	Node *node = parse(token);
-
-	codegen(node);
+	tokenize(user_input);
+	parse();
+	codegen();
 
 	return 0;
 }

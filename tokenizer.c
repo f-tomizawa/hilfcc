@@ -1,5 +1,7 @@
 #include "hilfcc.h"
 
+Token *token;
+
 void error_at(char *loc, char *fmt, ...) {
 	va_list ap;
 	va_start(ap, fmt);
@@ -34,7 +36,7 @@ Token *new_token(TokenKind kind, Token *cur, char *str, int len) {
 	return tok;
 }
 
-Token *tokenize(char *user_input) {
+void tokenize(char *user_input) {
 	char *p = user_input;
 	Token head;
 	head.next = NULL;
@@ -64,5 +66,5 @@ Token *tokenize(char *user_input) {
 		error_at(p, "トークン化できません");
 	}
 	new_token(TK_EOF, cur, p, 0);
-	return head.next;
+	token = head.next;
 }

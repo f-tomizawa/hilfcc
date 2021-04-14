@@ -1,6 +1,6 @@
 #include "hilfcc.h"
 
-Token *token;
+Node *node;
 
 bool consume(char *op) {
 	if (token->kind != TK_RESERVED ||
@@ -131,8 +131,6 @@ Node *primary() {
 	return new_num(expect_number());
 }
 
-Node *parse(Token *tok) {
-	token = tok;
-	Node *node = expr();
-	return node;
+void parse() {
+	node = expr();
 }
