@@ -27,6 +27,14 @@ bool startswith(char *p, char *q) {
 	return memcmp(p, q, strlen(q)) == 0;
 }
 
+bool is_ident_head(char p) {
+	return ('a' <= p && p <= 'z') || ('A' <= p && p <= 'Z') || p == '_';
+}
+
+bool is_ident_char(char p) {
+	return is_ident_head(p) || ('0' <= p && p <= '9');
+}
+
 Token *new_token(TokenKind kind, Token *cur, char *str, int len) {
 	Token *tok = calloc(1, sizeof(Token));
 	tok->kind = kind;
@@ -55,8 +63,13 @@ void tokenize(char *user_input) {
 			cur = new_token(TK_RESERVED, cur, p++, 1);
 			continue;
 		}
-		if ('a' <= *p && *p <= 'z') {
-			cur = new_token(TK_IDENT, cur, p++, 1);
+		if (is_ident_head(*p)) {
+			char *start = p;
+			int lvar_len = 0;
+			do {
+				p++; lvar_len++;
+			} while(is_ident_char(*p));
+			cur = new_token(TK_IDENT, cur, start, lvar_len);
 			continue;
 		}
 		if (isdigit(*p)) {
