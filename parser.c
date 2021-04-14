@@ -28,8 +28,8 @@ void expect(char *op) {
 	token = token->next;
 }
 
-Token *consume_ident() {
-	if (token->kind != TK_IDENT)
+Token *consume_kind(TokenKind kind) {
+	if (token->kind != kind)
 		return NULL;
 	Token *token_tmp = token;
 	token = token->next;
@@ -94,8 +94,17 @@ void program() {
 }
 
 Node *stmt() {
-	Node *node = expr();
-	expect(";");
+	Node *node;
+
+	if (consume_kind(TK_RETURN)) {
+		node = calloc(1, sizeof(Node));
+		node->kind = ND_RETURN;
+		node->lhs = expr();
+	} else {
+		node = expr();
+	}
+	if (!consume(";"))
+		error_at(token->str, "';'ではないトークンです");
 	return node;
 }
 
@@ -179,7 +188,7 @@ Node *primary() {
 		expect(")");
 		return node;
 	}
-	Token *tok = consume_ident();
+	Token *tok = consume_kind(TK_IDENT);
 	if (tok) {
 		Node *node = calloc(1, sizeof(Node));
 		node->kind = ND_LVAR;

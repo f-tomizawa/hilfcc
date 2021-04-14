@@ -63,6 +63,11 @@ void tokenize(char *user_input) {
 			cur = new_token(TK_RESERVED, cur, p++, 1);
 			continue;
 		}
+		if (strncmp(p, "return", 6) == 0 && !is_ident_char(p[6])) {
+			cur = new_token(TK_RETURN, cur, p, 6);
+			p += 6;
+			continue;
+		}
 		if (is_ident_head(*p)) {
 			char *start = p;
 			int lvar_len = 0;
