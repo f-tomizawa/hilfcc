@@ -180,14 +180,13 @@ void gen(Node *node) {
 void codegen() {
 	printf(".intel_syntax noprefix\n");
 	printf(".globl main\n");
-	printf("main:\n");
 
-	printf("	push rbp\n");
-	printf("	mov rbp, rsp\n");
-	printf("	sub rsp, 208\n");
-
-	for (Node *cur = code; cur; cur = cur->next) {
-		gen(cur);
+	for (Function *cur = function; cur; cur = cur->next) {
+		printf("%s:\n", cur->name);
+		printf("	push rbp\n");
+		printf("	mov rbp, rsp\n");
+		printf("	sub rsp, 208\n");
+		gen(cur->body);
 		printf("	pop rax\n");
 	}
 	

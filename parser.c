@@ -1,14 +1,6 @@
 #include "hilfcc.h"
 
-typedef struct LVar LVar;
-struct LVar {
-	LVar *next;
-	char *name;
-	int len;
-	int offset;
-};
-
-Node *code;
+Function *function;
 LVar *locals;
 
 bool consume(char *op) {
@@ -75,6 +67,7 @@ Node *new_num(int val) {
 }
 
 void program();
+Function *function_declare();
 Node *stmt();
 Node *expr();
 Node *assign();
@@ -86,22 +79,42 @@ Node *unary();
 Node *primary();
 
 /** 
- * program = function*
+ * program = function-declare*
 **/
 
 void program() {
-	Node head = {};
-	Node *cur = &head;
+	Function head = {};
+	Function *cur = &head;
 	while (!at_eof()) {
-		cur = cur->next = stmt();
+		cur = cur->next = function_declare();
 	}
-	code = head.next;
+	function = head.next;
 	return;
 }
 
 /**
- * function = ident "(" (ident ("," ident)*?) ")" "{" stmt "}"
+ * function-declare = ident "(" (ident ("," ident)*?)? ")" "{" stmt "}"
 **/
+Function *function_declare() {
+	Function *function = calloc(1, sizeof(Function));
+	Token *tok = consume_kind(TK_IDENT);
+	if (!tok) {
+		error_at(tok->str,  "関数定義ではありません\n");
+	}
+	function->name = calloc(tok->len, sizeof(char));
+	strncpy(function->name, tok->str, tok->len);
+	expect("(");
+	expect(")");
+	expect("{");
+	Node *node = new_node(ND_BLOCK);
+	Node head = {};
+	Node *cur = &head;
+	while(!consume("}"))
+		cur = cur->next = stmt();
+	node->body = head.next;
+	function->body = node;
+	return function;
+}
 
 /** 
  * stmt = "return" expr ";"

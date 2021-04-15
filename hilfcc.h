@@ -77,7 +77,23 @@ struct Node {
 	int offset;
 };
 
-extern Node *code;
+typedef struct LVar LVar;
+struct LVar {
+	LVar *next;
+	char *name;
+	int len;
+	int offset;
+};
+
+typedef struct Function Function;
+struct Function {
+	Function *next;
+	char *name;
+	LVar *locals;	
+	Node *body;
+};
+
+extern Function *function;
 void parse();
 
 void codegen(); 
