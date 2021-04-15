@@ -48,6 +48,24 @@ void gen(Node *node) {
 			printf(".L.end.%d:\n", index);
 			return;
 		}
+		case ND_FOR: {
+			int index = count();
+			if (node->init)
+				gen(node->init);
+			printf(".L.begin.%d:\n", index);
+			if (node->cond) {
+				gen(node->cond);
+				printf("	pop rax\n");
+				printf("	cmp rax, 0\n");
+				printf("	je .L.end.%d\n", index);
+			}
+			gen(node->then);
+			if (node->inc)
+				gen(node->inc);
+			printf("	jmp .L.begin.%d\n", index);
+			printf(".L.end.%d:\n", index);
+			return;
+		}
 		case ND_NUM:
 			printf("	push %d\n", node->val);
 			return;

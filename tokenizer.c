@@ -88,6 +88,11 @@ void tokenize(char *user_input) {
 			p += 5;
 			continue;
 		}
+		if (is_keyword(p, "for")) {
+			cur = new_token(TK_FOR, cur, p, 3);
+			p += 3;
+			continue;
+		}
 		if (is_ident_head(*p)) {
 			char *start = p;
 			int lvar_len = 0;

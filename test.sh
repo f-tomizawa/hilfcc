@@ -69,4 +69,8 @@ assert 3 'if (2 > 1) a = 3; else a = 4; return a;'
 
 assert 10 'i=0; while(i<10) i=i+1; return i;'
 
+assert 55 'sum=0; for (i=0; i<=10; i=i+1) sum=sum+i; return sum;'
+assert 45 'i=0; sum=0; for (; i<10; i=i+1) sum=sum+i; return sum;'
+assert 3 'for (;;) return 3; return 5;'
+
 echo OK
