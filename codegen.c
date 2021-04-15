@@ -1,5 +1,7 @@
 #include "hilfcc.h"
 
+static char *argreg[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
+
 static int count() {
 	static int i = 0;
 	return i++;
@@ -92,10 +94,42 @@ void gen(Node *node) {
 			printf("	mov [rax], rdi\n");
 			printf("	push rdi\n");
 			return;
-		case ND_FUNCALL:
+		case ND_FUNCALL: {
+			// 引数を処理して各レジスタに格納
+			int narg = 0;
+			for (Node *arg = node->args; arg && narg < 6; arg = arg->next) {
+				gen(arg);
+				narg++;
+			}
+			for (int i = narg - 1; i >= 0; i--) {
+				printf("	pop %s\n", argreg[i]);
+			}
+
+			// スタックポインタが16の倍数となるよう調整
+			int index = count();
+			printf("	mov r10, rdi\n");
+			printf("	mov r11, rdx\n");
+			printf("	mov rdi, rsp\n");
+			printf("	push rdi\n");
+			printf("	mov rax, 16\n");
+			printf("	cqo\n");
+			printf("	idiv rdi\n");
+			printf("	cmp rdx, 0\n");
+			printf("	jne .L.dest.%d\n", index);
+			printf("	push rdi\n");
+			printf(".L.dest.%d:\n", index);
+
+			printf("	mov rdi, r10\n");
+			printf("	mov rdx, r11\n");
 			printf("	call %s\n", node->funcname);
+
+			// 調整したスタックポインタを戻す
+			printf("	pop rdi\n");
+			printf("	mov rsp, rdi\n");
+			
 			printf("	push rax\n");
 			return;
+		}
 	}
 
 	gen(node->lhs);

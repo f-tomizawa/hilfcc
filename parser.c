@@ -244,10 +244,20 @@ Node *primary() {
 	Token *tok = consume_kind(TK_IDENT);
 	if (tok) {
 		if (consume("(")) {
-			expect(")");
+			// identifier の次に "(" が来たら関数呼び出し
 			Node *node = new_node(ND_FUNCALL);
 			node->funcname = calloc(tok->len, sizeof(char));
 			strncpy(node->funcname, tok->str, tok->len);
+			Node head = {};
+			Node *cur = &head;
+			if (!consume(")")) {
+				do {
+					cur = cur->next = expr();
+				} while (consume(","));
+				expect(")");
+			}
+			cur->next = NULL;
+			node->args = head.next;
 			return node;
 		}
 		Node *node = new_node(ND_LVAR);
