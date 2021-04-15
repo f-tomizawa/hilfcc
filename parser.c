@@ -98,6 +98,14 @@ void program() {
 	code = head.next;
 	return;
 }
+/** 
+stmt = "return" expr ";"
+     | "if" "(" expr ")" stmt ("else" stmt)?
+     | "for" "(" expr? ";" expr? ";" expr? ")" stmt
+     | "while" "(" expr ")" stmt
+     | "{" expr "}" 
+     | expr ";"
+**/
 
 Node *stmt() {
 	Node *node;
