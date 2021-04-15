@@ -96,6 +96,7 @@ void program() {
  * function-declare = ident "(" (ident ("," ident)*?)? ")" "{" stmt "}"
 **/
 Function *function_declare() {
+	locals = calloc(1, sizeof(LVar));
 	Function *function = calloc(1, sizeof(Function));
 	Token *tok = consume_kind(TK_IDENT);
 	if (!tok) {
@@ -113,6 +114,7 @@ Function *function_declare() {
 		cur = cur->next = stmt();
 	node->body = head.next;
 	function->body = node;
+	function->locals = locals;
 	return function;
 }
 
@@ -312,6 +314,5 @@ Node *primary() {
 }
 
 void parse() {
-	locals = calloc(1, sizeof(LVar));
 	program();
 }
