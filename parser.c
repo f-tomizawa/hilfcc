@@ -107,8 +107,7 @@ Node *stmt() {
 	}
 
 	if (consume_kind(TK_IF)) {
-		node = calloc(1, sizeof(Node));
-		node->kind = ND_IF;
+		node = new_node(ND_IF);
 		expect("(");
 		node->cond = expr();
 		expect(")");
@@ -120,8 +119,7 @@ Node *stmt() {
 		return node;
 	}
 	if (consume_kind(TK_WHILE)) {
-		node = calloc(1, sizeof(Node));
-		node->kind = ND_WHILE;
+		node = new_node(ND_WHILE);
 		expect("(");
 		node->cond = expr();
 		expect(")");
@@ -129,8 +127,7 @@ Node *stmt() {
 		return node;
 	}
 	if (consume_kind(TK_FOR)) {
-		node = calloc(1, sizeof(Node));
-		node->kind = ND_FOR;
+		node = new_node(ND_FOR);
 		expect("(");
 		if (consume(";")) {
 			node->init = NULL;
@@ -154,8 +151,7 @@ Node *stmt() {
 		return node;
 	}
 	if (consume_kind(TK_RETURN)) {
-		node = calloc(1, sizeof(Node));
-		node->kind = ND_RETURN;
+		node = new_node(ND_RETURN);
 		node->lhs = expr();
 	} else {
 		node = expr();
@@ -247,8 +243,7 @@ Node *primary() {
 	}
 	Token *tok = consume_kind(TK_IDENT);
 	if (tok) {
-		Node *node = calloc(1, sizeof(Node));
-		node->kind = ND_LVAR;
+		Node *node = new_node(ND_LVAR);
 
 		LVar *lvar = find_lvar(tok);
 		if (lvar) {
