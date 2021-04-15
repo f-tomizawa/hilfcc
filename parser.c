@@ -96,6 +96,16 @@ void program() {
 Node *stmt() {
 	Node *node;
 
+	if (consume("{")) {
+		Node head = {};
+		Node *cur = &head;
+		while(!consume("}"))
+			cur = cur->next = stmt();
+		node = new_node(ND_BLOCK);
+		node->body = head.next;
+		return node;
+	}
+
 	if (consume_kind(TK_IF)) {
 		node = calloc(1, sizeof(Node));
 		node->kind = ND_IF;
