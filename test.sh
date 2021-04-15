@@ -1,10 +1,15 @@
 #!/bin/bash
+cat <<EOF | cc -xc -c -o tmp2.o -
+int ret3() { return 3; }
+int ret5() { return 5; }
+EOF
+
 assert() {
     expected="$1"
     input="$2"
 
     ./hilfcc "$input" > tmp.s
-    cc -o tmp tmp.s
+    cc -o tmp tmp.s tmp2.o
     ./tmp
     actual="$?"
 
@@ -79,5 +84,8 @@ assert 3 'for (;;) return 3; return 5;'
 assert 4 'a=3; b=4; if (a < b) {c=a; a=b; b=c;} return a;'
 assert 45 'sum=0; i=0; while(i<10) {sum = sum + i; i = i + 1;} return sum;'
 assert 135 'ans=1; sum=0; for (i=1; i<=5; i=i+1) { ans = ans * i; sum = sum + i;} return ans + sum;'
+
+assert 3 'a=ret3(); return a;'
+assert 15 'return ret3() * ret5();'
 
 echo OK

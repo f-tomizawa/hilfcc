@@ -243,6 +243,13 @@ Node *primary() {
 	}
 	Token *tok = consume_kind(TK_IDENT);
 	if (tok) {
+		if (consume("(")) {
+			expect(")");
+			Node *node = new_node(ND_FUNCALL);
+			node->funcname = calloc(tok->len, sizeof(char));
+			strncpy(node->funcname, tok->str, tok->len);
+			return node;
+		}
 		Node *node = new_node(ND_LVAR);
 
 		LVar *lvar = find_lvar(tok);
