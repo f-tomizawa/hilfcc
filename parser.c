@@ -86,7 +86,7 @@ Node *unary();
 Node *primary();
 
 /** 
-program = stmt*
+ * program = function*
 **/
 
 void program() {
@@ -98,13 +98,18 @@ void program() {
 	code = head.next;
 	return;
 }
+
+/**
+ * function = ident "(" (ident ("," ident)*?) ")" "{" stmt "}"
+**/
+
 /** 
-stmt = "return" expr ";"
-     | "if" "(" expr ")" stmt ("else" stmt)?
-     | "for" "(" expr? ";" expr? ";" expr? ")" stmt
-     | "while" "(" expr ")" stmt
-     | "{" expr "}" 
-     | expr ";"
+ * stmt = "return" expr ";"
+ *      | "if" "(" expr ")" stmt ("else" stmt)?
+ *      | "for" "(" expr? ";" expr? ";" expr? ")" stmt
+ *      | "while" "(" expr ")" stmt
+ *      | "{" expr "}" 
+ *      | expr ";"
 **/
 
 Node *stmt() {
