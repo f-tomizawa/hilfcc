@@ -57,6 +57,7 @@ struct Node {
 	NodeKind kind;
 	Node *lhs;
 	Node *rhs;
+	Node *next;
 
 	// if, for文用
 	Node *cond;
@@ -67,7 +68,6 @@ struct Node {
 
 	// Block用
 	Node *body;
-	Node *next;
 
 	// Function Call用
 	char *funcname;
@@ -77,7 +77,7 @@ struct Node {
 	int offset;
 };
 
-extern Node *code[];
+extern Node *code;
 void parse();
 
 void codegen(); 

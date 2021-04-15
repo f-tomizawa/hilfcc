@@ -8,7 +8,7 @@ struct LVar {
 	int offset;
 };
 
-Node *code[100];
+Node *code;
 LVar *locals;
 
 bool consume(char *op) {
@@ -85,12 +85,18 @@ Node *mul();
 Node *unary();
 Node *primary();
 
+/** 
+program = stmt*
+**/
+
 void program() {
-	int i = 0;
+	Node head = {};
+	Node *cur = &head;
 	while (!at_eof()) {
-		code[i++] = stmt();
-	code[i] = NULL;
+		cur = cur->next = stmt();
 	}
+	code = head.next;
+	return;
 }
 
 Node *stmt() {

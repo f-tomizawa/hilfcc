@@ -186,8 +186,8 @@ void codegen() {
 	printf("	mov rbp, rsp\n");
 	printf("	sub rsp, 208\n");
 
-	for (int i = 0; code[i]; i++) {
-		gen(code[i]);
+	for (Node *cur = code; cur; cur = cur->next) {
+		gen(cur);
 		printf("	pop rax\n");
 	}
 	
