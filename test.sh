@@ -1,18 +1,11 @@
 #!/bin/bash
-cat <<EOF | cc -xc -c -o tmp2.o -
-int add(int x, int y) { return x+y; }
-int sub(int x, int y) { return x-y; }
-int add6(int a, int b, int c, int d, int e, int f) {
-  return a+b+c+d+e+f;
-}
-EOF
 
 assert() {
     expected="$1"
     input="$2"
 
     ./hilfcc "$input" > tmp.s
-    cc -o tmp tmp.s tmp2.o
+    cc -o tmp tmp.s
     ./tmp
     actual="$?"
 
@@ -89,10 +82,14 @@ assert 135 'main() { ans=1; sum=0; for (i=1; i<=5; i=i+1) { ans = ans * i; sum =
 assert 3 'main() { a=ret3(); return a; } ret3() { return 3; }'
 assert 15 'main() { return ret3() * ret5(); } ret3() { return 3; } ret5() { return 5; } '
 
-assert 8 'main() { return add(3, 5); }'
-assert 2 'main() { return sub(5, 3); }'
-assert 21 'main() { return add6(1,2,3,4,5,6); }'
-assert 66 'main() { return add6(1,2,add6(3,4,5,6,7,8),9,10,11); }'
-assert 136 'main() { return add6(1,2,add6(3,add6(4,5,6,7,8,9),10,11,12,13),14,15,16); }'
+assert 8 'main() { return add(3, 5); } add(x, y) { return x+y; }'
+assert 2 'main() { return sub(5, 3); } sub(x, y) { return x-y; }'
+assert 21 'main() { return add6(1,2,3,4,5,6); } add6(a, b, c, d, e, f) { return a+b+c+d+e+f; }'
+assert 66 'main() { return add6(1,2,add6(3,4,5,6,7,8),9,10,11); } add6(a, b, c, d, e, f) { return a+b+c+d+e+f; }'
+assert 136 'main() { return add6(1,2,add6(3,add6(4,5,6,7,8,9),10,11,12,13),14,15,16); } add6(a, b, c, d, e, f) { return a+b+c+d+e+f; }'
+
+assert 7 'main() { return add2(3,4); } add2(x, y) { return x+y; }'
+assert 1 'main() { return sub2(4,3); } sub2(x, y) { return x-y; }'
+assert 55 'main() { return fib(9); } fib(x) { if (x<=1) return 1; return fib(x-1) + fib(x-2); }'
 
 echo OK

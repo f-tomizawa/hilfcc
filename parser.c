@@ -114,8 +114,17 @@ Function *function_declare() {
 	}
 	function->name = calloc(tok->len, sizeof(char));
 	strncpy(function->name, tok->str, tok->len);
+	function->nargs = 0;
 	expect("(");
-	expect(")");
+	if (!consume(")")) {
+		do {
+			Token *var = consume_kind(TK_IDENT); 
+			LVar *lvar = new_lvar(var);
+			function->nargs++;
+		} while (consume(","));
+		expect(")");
+	}
+	function->args = locals;
 	expect("{");
 	Node *node = new_node(ND_BLOCK);
 	Node head = {};

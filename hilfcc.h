@@ -89,6 +89,8 @@ typedef struct Function Function;
 struct Function {
 	Function *next;
 	char *name;
+	int nargs;
+	LVar *args;
 	LVar *locals;	
 	Node *body;
 };

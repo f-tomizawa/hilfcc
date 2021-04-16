@@ -186,6 +186,12 @@ void codegen() {
 		printf("	push rbp\n");
 		printf("	mov rbp, rsp\n");
 		printf("	sub rsp, 208\n");
+		int i = cur->nargs;
+		for (LVar *arg = cur->args; arg && i > 0; arg = arg->next) {
+			printf("	mov rax, rbp\n");
+			printf("	sub rax, %d\n", arg->offset);
+			printf("	mov [rax], %s\n", argreg[--i]);
+		}
 		gen(cur->body);
 		printf("	pop rax\n");
 	}
