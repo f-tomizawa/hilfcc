@@ -279,11 +279,23 @@ Node *mul() {
 	}
 }
 
+/**
+ * unary = primary
+ *    | "+"? unary
+ *    | "-"? unary
+ *    | "*" unary
+ *    | "&" unary
+**/
+
 Node *unary() {
 	if (consume("+"))
 		return unary();
 	else if (consume("-"))
 		return new_binary(ND_SUB, new_num(0), unary());
+	else if (consume("&"))
+		return new_binary(ND_ADDR, unary(), new_num(0));
+	else if (consume("*"))
+		return new_binary(ND_DEREF, unary(), new_num(0));
 	return primary();
 }
 

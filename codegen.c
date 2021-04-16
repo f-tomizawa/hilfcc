@@ -93,6 +93,17 @@ void gen(Node *node) {
 			printf("	mov rax, [rax]\n");
 			printf("	push rax\n");
 			return;
+		case ND_ADDR:
+			// ローカル変数のアドレスを読み出す
+			gen_lvar_addr(node->lhs);
+			return;
+		case ND_DEREF:
+			// スタック先頭に保存されているアドレスを、それが指し示す値に置き換える
+			gen(node->lhs);
+			printf("	pop rax\n");
+			printf("	mov rax, [rax]\n");
+			printf("	push rax\n");
+			return;
 		case ND_ASSIGN:
 			// 右辺の評価結果を左辺の変数に対応するメモリアドレスに保存
 			gen_lvar_addr(node->lhs);
