@@ -211,17 +211,13 @@ Node *stmt() {
 		Token *var = consume_kind(TK_IDENT); 
 		node->lhs = new_node(ND_LVAR);
 		node->lhs->var = new_lvar(var);
-		expect(";");
-		return node;
-	}
-	if (consume_kind(TK_RETURN)) {
+	} else if (consume_kind(TK_RETURN)) {
 		node = new_node(ND_RETURN);
 		node->lhs = expr();
 	} else {
 		node = expr();
 	}
-	if (!consume(";"))
-		error_at(token->str, "';'ではないトークンです");
+	expect(";");
 	return node;
 }
 
