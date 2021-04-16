@@ -16,7 +16,7 @@ void assign_lvar_offsets(Function *function) {
   function->stack_size = offset;
 }
 
-void gen_lval(Node *node) {
+void gen_lvar_addr(Node *node) {
 	if (node->kind != ND_LVAR)
 		error("代入の左辺値が変数ではありません");
 	printf("	mov rax, rbp\n");
@@ -88,14 +88,14 @@ void gen(Node *node) {
 			return;
 		case ND_LVAR:
 			// 変数をスタック先頭アドレスに保存されている数値に置き換える操作
-			gen_lval(node);
+			gen_lvar_addr(node);
 			printf("	pop rax\n");
 			printf("	mov rax, [rax]\n");
 			printf("	push rax\n");
 			return;
 		case ND_ASSIGN:
 			// 右辺の評価結果を左辺の変数に対応するメモリアドレスに保存
-			gen_lval(node->lhs);
+			gen_lvar_addr(node->lhs);
 			gen(node->rhs);
 
 			printf("	pop rdi\n");
