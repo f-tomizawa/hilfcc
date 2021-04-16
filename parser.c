@@ -47,6 +47,16 @@ bool at_eof() {
 	return token->kind == TK_EOF;
 }
 
+LVar *new_lvar(Token *tok) {
+	LVar *lvar = calloc(1, sizeof(LVar));
+	lvar->next = locals;
+	lvar->name = tok->str;
+	lvar->len = tok->len;
+	lvar->offset = locals->offset + 8;
+	locals = lvar;
+	return lvar;
+}
+
 Node *new_node(NodeKind kind) {
 	Node *node = calloc(1, sizeof(Node));
 	node->kind = kind;
@@ -297,17 +307,10 @@ Node *primary() {
 		Node *node = new_node(ND_LVAR);
 
 		LVar *lvar = find_lvar(tok);
-		if (lvar) {
-			node->offset = lvar->offset;
-		} else {
-			lvar = calloc(1, sizeof(LVar));
-			lvar->next = locals;
-			lvar->name = tok->str;
-			lvar->len = tok->len;
-			lvar->offset = locals->offset + 8;
-			node->offset = lvar->offset;
-			locals = lvar;
+		if (!lvar) {
+			lvar = new_lvar(tok);
 		}
+		node->offset = lvar->offset;
 		return node;
 	}
 	return new_num(expect_number());
