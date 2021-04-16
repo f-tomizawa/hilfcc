@@ -102,22 +102,25 @@ void program() {
 }
 
 /**
- * function-declare = ident "(" (ident ("," ident)*?)? ")" "{" stmt "}"
+ * function-declare = "int" ident "(" ("int" ident ("," "int" ident)*?)? ")" "{" stmt "}"
 **/
 Function *function_declare() {
 	locals = calloc(1, sizeof(LVar));
 	Function *function = calloc(1, sizeof(Function));
+	Token *decl = consume_kind(TK_INT);
 	Token *tok = consume_kind(TK_IDENT);
-	if (!tok) {
-		error_at(tok->str,  "関数定義ではありません\n");
-	}
+	if (!tok || !decl) 
+		error("関数定義ではありません\n");
 	function->name = calloc(tok->len, sizeof(char));
 	strncpy(function->name, tok->str, tok->len);
 	function->nargs = 0;
 	expect("(");
 	if (!consume(")")) {
 		do {
+			Token *decl = consume_kind(TK_INT); 
 			Token *var = consume_kind(TK_IDENT); 
+			if (!var || !decl) 
+				error("引数定義ではありません\n");
 			LVar *lvar = new_lvar(var);
 			function->nargs++;
 		} while (consume(","));
