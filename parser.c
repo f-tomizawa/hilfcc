@@ -143,11 +143,13 @@ Function *function_declare() {
  *      | "while" "(" expr ")" stmt
  *      | "{" expr "}" 
  *      | expr ";"
+ * 		| "int" ident ";"
 **/
 
 Node *stmt() {
 	Node *node;
 
+	// 末尾に";"を必要としない構文群
 	if (consume("{")) {
 		Node head = {};
 		Node *cur = &head;
@@ -200,6 +202,16 @@ Node *stmt() {
 			expect(")");
 		}
 		node->then = stmt();
+		return node;
+	}
+
+	// 末尾に";"を必要とする構文群
+	if (consume_kind(TK_INT)) {
+		node = new_node(ND_VARDECL);
+		Token *var = consume_kind(TK_IDENT); 
+		node->lhs = new_node(ND_LVAR);
+		node->lhs->var = new_lvar(var);
+		expect(";");
 		return node;
 	}
 	if (consume_kind(TK_RETURN)) {
@@ -328,7 +340,7 @@ Node *primary() {
 
 		LVar *lvar = find_lvar(tok);
 		if (!lvar) {
-			lvar = new_lvar(tok);
+			error_at(tok->str, "定義されていない識別子です");
 		}
 		node->var = lvar;
 		return node;

@@ -26,6 +26,9 @@ void gen_lvar_addr(Node *node) {
 
 void gen(Node *node) {
 	switch (node->kind) {
+		case ND_VARDECL:
+			gen_lvar_addr(node->lhs);
+			return;
 		case ND_BLOCK:
 			for (Node *cur = node->body; cur; cur = cur->next) {
 				gen(cur);

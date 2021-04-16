@@ -13,6 +13,7 @@ typedef enum {
 	TK_ELSE,
 	TK_WHILE,
 	TK_FOR,
+	TK_INT,
 	TK_IDENT,
 	TK_NUM,
 	TK_EOF,
@@ -58,6 +59,7 @@ typedef enum {
 	ND_FOR,
 	ND_BLOCK,
 	ND_FUNCALL,
+	ND_VARDECL,
 	ND_LVAR,
 	ND_NUM,
 } NodeKind;

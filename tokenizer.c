@@ -93,6 +93,11 @@ void tokenize(char *user_input) {
 			p += 3;
 			continue;
 		}
+		if (is_keyword(p, "int")) {
+			cur = new_token(TK_INT, cur, p, 3);
+			p += 3;
+			continue;
+		}
 		if (is_ident_head(*p)) {
 			char *start = p;
 			int lvar_len = 0;
