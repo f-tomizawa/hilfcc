@@ -7,11 +7,20 @@ static int count() {
 	return i++;
 }
 
+void assign_lvar_offsets(Function *function) {
+  int offset = 0;
+  for (LVar *var = function->locals; var; var = var->next) {
+    offset += 8;
+    var->offset = offset;
+  }
+  function->stack_size = offset;
+}
+
 void gen_lval(Node *node) {
 	if (node->kind != ND_LVAR)
 		error("代入の左辺値が変数ではありません");
 	printf("	mov rax, rbp\n");
-	printf("	sub rax, %d\n", node->offset);
+	printf("	sub rax, %d\n", node->var->offset);
 	printf("	push rax\n");
 }
 
@@ -182,10 +191,14 @@ void codegen() {
 	printf(".globl main\n");
 
 	for (Function *cur = function; cur; cur = cur->next) {
+		assign_lvar_offsets(cur);
+
 		printf("%s:\n", cur->name);
+
+		// Prologue
 		printf("	push rbp\n");
 		printf("	mov rbp, rsp\n");
-		printf("	sub rsp, 208\n");
+		printf("	sub rsp, %d\n", cur->stack_size);
 		int i = cur->nargs;
 		for (LVar *arg = cur->args; arg && i > 0; arg = arg->next) {
 			printf("	mov rax, rbp\n");

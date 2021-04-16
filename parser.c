@@ -52,7 +52,6 @@ LVar *new_lvar(Token *tok) {
 	lvar->next = locals;
 	lvar->name = tok->str;
 	lvar->len = tok->len;
-	lvar->offset = locals->offset + 8;
 	locals = lvar;
 	return lvar;
 }
@@ -319,7 +318,7 @@ Node *primary() {
 		if (!lvar) {
 			lvar = new_lvar(tok);
 		}
-		node->offset = lvar->offset;
+		node->var = lvar;
 		return node;
 	}
 	return new_num(expect_number());

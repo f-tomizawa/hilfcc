@@ -32,6 +32,14 @@ void error_at(char *loc, char *fmt, ...);
 void error(char *fmt, ...);
 void tokenize(char *user_input);
 
+typedef struct LVar LVar;
+struct LVar {
+	LVar *next;
+	char *name;
+	int len;
+	int offset;
+};
+
 typedef enum {
 	ND_ADD,
 	ND_SUB,
@@ -73,16 +81,11 @@ struct Node {
 	char *funcname;
 	Node *args;
 
+	// Num 用
 	int val;
-	int offset;
-};
 
-typedef struct LVar LVar;
-struct LVar {
-	LVar *next;
-	char *name;
-	int len;
-	int offset;
+	// LVar 用
+	LVar *var;
 };
 
 typedef struct Function Function;
@@ -91,6 +94,7 @@ struct Function {
 	char *name;
 	int nargs;
 	LVar *args;
+	int stack_size;
 	LVar *locals;	
 	Node *body;
 };
